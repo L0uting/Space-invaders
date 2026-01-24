@@ -51,18 +51,34 @@ def draw_vaisseau():
         color(x, y, (255, 0, 0))
    for x, y in enemis:
     screen.blit(monster_img, (x*16, y*16))
+direction = 1 
+bord_gauche = 1
+bord_droit = 50
+
 def deplacement_enemis():
     global direction
-    phase = tick % 340
-    if phase <= 165:
-        direction = 1
-    else:
-        direction = -1
 
-    if tick % 20 == 0:
+    if len(enemis) == 0:
+        return
+    if tick % 20 == 0:  
         for i in range(len(enemis)):
             x, y = enemis[i]
             enemis[i] = (x + direction, y)
+    toucher_bord = False
+    for x, y in enemis:
+        if x >= bord_droit and direction == 1:
+            toucher_bord = True
+            break
+        elif x <= bord_gauche and direction == -1:
+            toucher_bord = True
+            break
+
+
+    if toucher_bord:
+        direction *= -1  
+        for i in range(len(enemis)):
+            x, y = enemis[i]
+
 
    
 
@@ -73,7 +89,21 @@ def deplacement():
     x -= 1
    if keys[pygame.K_d]:
     x += 1
+   if keys[pygame.K_s]:
+    y += 1
+   if keys[pygame.K_z]:
+    y-= 1
    vaisseau[0] = (x, y)
+   if x<=0:
+      vaisseau[0]= (1,y)
+   if x>=55:
+      vaisseau[0]= (55,y)
+   if y<=30:
+      vaisseau[0]= (x,31)
+   if y>=42:
+      vaisseau[0]= (x,41)
+      
+      
 
 def shoot():
    global k

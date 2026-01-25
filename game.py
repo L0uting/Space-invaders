@@ -7,54 +7,71 @@ clock = pygame.time.Clock()
 tire = pygame.mixer.Sound("Assets/tire.mp3")
 tire.set_volume(0.1)
 pygame.mixer.music.load("Assets/son.mp3")
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.set_volume(0)
 pygame.mixer.music.play(-1) 
-
+TAILLE = 16
 k=0
 tick = 0
+murs=[]
+enemis_xy=[ 
 
-enemis=[ 
-
-(1, 1),
-(1, 11),
-(1, 21),
-(11, 1),
-(11, 11),
-(11, 21),
-(21, 1),
-(21, 11),
-(21, 21),
-(31, 1),
-(31, 11),
-(31, 21),
-(41, 1),
-(41, 11),
-(41, 21),
+(1, 10),
+(1, 20),
+(1, 30),
+(11, 10),
+(11, 20),
+(11, 30),
+(21, 10),
+(21, 20),
+(21, 30),
+(31, 10),
+(31, 20),
+(31, 30),
+(41, 10),
+(41, 20),
+(41, 30),
 
 ]
+enemis=[]
+for x,y in enemis_xy:
+   rect = pygame.Rect(x * TAILLE, y * TAILLE, TAILLE, TAILLE)
+   enemis.append(rect)
+
+   
+
 direction = 1
 projectiles = []
-screen = pygame.display.set_mode((900, 720))
-monster_img = pygame.image.load("Assets/az.png").convert_alpha()
+
+screen = pygame.display.set_mode((1920, 1072))
+monster_img = pygame.image.load("Assets/monstre2.png").convert_alpha()
+monster2_img = pygame.image.load("Assets/monstre1.png").convert_alpha()
 gal = pygame.image.load("Assets/galaxy.png").convert_alpha()
-gal = pygame.transform.scale(gal, (900, 720))
+gal = pygame.transform.scale(gal, (1920, 1080))
 vaissea=pygame.image.load("Assets/vaisseau.png").convert_alpha()
 vaissea = pygame.transform.scale(vaissea, (100,100))
-monster_img = pygame.transform.scale(monster_img, (100,100))
+monster_img = pygame.transform.scale(monster_img, (130,100))
+monster2_img = pygame.transform.scale(monster2_img, (130,100))
 
 def color(x, y, color):
    screen.fill(color, (x*16, y*16, 16, 16))
 def draw_vaisseau():
+   global tick
    for x,y in vaisseau:
        screen.blit(vaissea, ((x*16)-45, y*16))
    for x,y in projectiles:
         color(x, y, (255, 0, 0))
-   for x, y in enemis:
-    screen.blit(monster_img, (x*16, y*16))
+   for ennemi in enemis: 
+        if tick % 40 < 20:
+            screen.blit(monster_img, (ennemi.x, ennemi.y - 10))
+        else:
+            screen.blit(monster2_img, (ennemi.x, ennemi.y - 10))
 direction = 1 
 bord_gauche = 1
-bord_droit = 50
+bord_droit = 112
 
+     
+
+   
 def deplacement_enemis():
     global direction
 
@@ -67,6 +84,8 @@ def deplacement_enemis():
     toucher_bord = False
     for x, y in enemis:
         if x >= bord_droit and direction == 1:
+          
+            
             toucher_bord = True
             break
         elif x <= bord_gauche and direction == -1:
@@ -96,12 +115,12 @@ def deplacement():
    vaisseau[0] = (x, y)
    if x<=0:
       vaisseau[0]= (1,y)
-   if x>=55:
-      vaisseau[0]= (55,y)
-   if y<=30:
-      vaisseau[0]= (x,31)
-   if y>=42:
-      vaisseau[0]= (x,41)
+   if x>=120:
+      vaisseau[0]= (120,y)
+   if y<=45:
+      vaisseau[0]= (x,46)
+   if y>=66:
+      vaisseau[0]= (x,65)
       
       
 
@@ -141,6 +160,7 @@ def main():
       draw_vaisseau()
       move_projectiles()
       deplacement_enemis()
+ 
       pygame.display.flip()
       k+=1
       tick += 1

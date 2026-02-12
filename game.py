@@ -7,9 +7,11 @@ clock = pygame.time.Clock()
 tire = pygame.mixer.Sound("Assets/tire.mp3")
 tire.set_volume(0.1)
 pygame.mixer.music.load("Assets/son.mp3")
-pygame.mixer.music.set_volume(0)
+pygame.mixer.music.set_volume(0.4)
 pygame.mixer.music.play(-1) 
 TAILLE = 16
+font = pygame.font.SysFont("Arial", 40)
+hitbox="oui"
 k=0
 tick = 0
 murs=[]
@@ -34,7 +36,7 @@ enemis_xy=[
 ]
 enemis=[]
 for x,y in enemis_xy:
-   rect = pygame.Rect(x * TAILLE, y * TAILLE, TAILLE, TAILLE)
+   rect = pygame.Rect(x * TAILLE, y * TAILLE, 115, 90)
    enemis.append(rect)
 
    
@@ -60,29 +62,35 @@ def draw_vaisseau():
        screen.blit(vaissea, ((x*16)-45, y*16))
    for x,y in projectiles:
         color(x, y, (255, 0, 0))
-   for ennemi in enemis: 
+   for ennemi    in enemis: 
         if tick % 40 < 20:
-            screen.blit(monster_img, (ennemi.x, ennemi.y - 10))
+            screen.blit(monster_img, (ennemi.x-4, ennemi.y - 12))
         else:
-            screen.blit(monster2_img, (ennemi.x, ennemi.y - 10))
+            screen.blit(monster2_img, (ennemi.x-4, ennemi.y - 6))
 direction = 1 
 bord_gauche = 1
 bord_droit = 112
 
      
-
+def debug():
+   global tick
+   for ennemi in enemis:
+      pygame.draw.rect(screen, (255, 0, 0), ennemi, 1) 
+   texte=font.render(f"ticks: {tick}", True, (255, 255, 255))
+   screen.blit(texte, (10, 10))
    
 def deplacement_enemis():
     global direction
 
     if len(enemis) == 0:
         return
-    if tick % 20 == 0:  
-        for i in range(len(enemis)):
-            x, y = enemis[i]
-            enemis[i] = (x + direction, y)
+    if tick % 1 == 0:  
+        for ennemi in enemis: 
+            ex, y = ennemi.x, ennemi.y
+            ennemi.x = ex + direction
+            
     toucher_bord = False
-    for x, y in enemis:
+    for x, y in enemis_xy:
         if x >= bord_droit and direction == 1:
           
             
@@ -134,13 +142,14 @@ def shoot():
         
         projectiles.append((x, y+1))
         tire.play()
+   
   
   
 def move_projectiles():
    global tick
    for i in range(len(projectiles)):
       x, y = projectiles[i]
-      if tick % 2 == 0:
+      if tick % 1== 0:
          y -= 1
       projectiles[i] = (x, y)
 def main():
@@ -154,7 +163,9 @@ def main():
       for event in pygame.event.get():
           if event.type == pygame.QUIT:
               running = False
-      screen.blit(gal, (1,1))
+      #screen.blit(gal, (1,1))
+      if hitbox=="oui":
+       debug()
       deplacement()
       shoot()
       draw_vaisseau()

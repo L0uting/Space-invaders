@@ -134,6 +134,7 @@ def deplacement():
 
 def shoot():
    global k
+
    if k>30:
     keys = pygame.key.get_pressed()
     x, y = vaisseau[0]
@@ -143,6 +144,12 @@ def shoot():
         projectiles.append((x, y+1))
         tire.play()
    
+for x, y in projectiles:
+    for ennemi in enemis:
+        if ennemi.collidepoint(x, y):
+            enemis.remove(ennemi)
+            
+
   
   
 def move_projectiles():

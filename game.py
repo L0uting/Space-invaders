@@ -74,13 +74,19 @@ def draw_vaisseau():
 direction = 1 
 bord_gauche = 1
 bord_droit = 112
-d=0
+d=50
+n=1
 def respawn():
-   global d
+   global d, n
    global enemis, enemis_xy 
    if len(enemis)==0:
-      d+=1
-      if d==20:
+      texte = font.render(f"ROUND {n}", True, (255, 255, 255))
+      screen.blit(texte, (100, 100))
+      
+   
+      d-=1
+      if d==0:
+
 
          enemis_xy = [ 
             (1, 10),
@@ -104,13 +110,14 @@ def respawn():
          for x,y in enemis_xy:
             rect = pygame.Rect(x * TAILLE, (y * TAILLE)-100, 115, 90)
             enemis.append(rect)
-         d=0
+         d=50
+         n+=1
 
 def debug():
-   global tick
+   global tick,n
    for ennemi in enemis:
       pygame.draw.rect(screen, (255, 0, 0), ennemi, 1) 
-   texte=font.render(f"ticks: {tick}", True, (255, 255, 255))
+   texte=font.render(f"ticks: {tick} {n}", True, (255, 255, 255))
    screen.blit(texte, (10, 10))
    
 def deplacement_enemis():

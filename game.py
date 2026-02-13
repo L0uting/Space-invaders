@@ -1,4 +1,5 @@
 import pygame
+import random
 vaisseau=[(1,40)]
 pygame.init()
 pygame.font.init() 
@@ -8,8 +9,13 @@ tire = pygame.mixer.Sound("Assets/tire.mp3")
 tire.set_volume(0.1)
 boom = pygame.mixer.Sound("Assets/boom.mp3")
 boom.set_volume(3)
+level = pygame.mixer.Sound("Assets/level.wav")
+level.set_volume(3)
+fin_vague_joue = False   
+end = pygame.mixer.Sound("Assets/end.wav")
+end.set_volume(0.3)
 pygame.mixer.music.load("Assets/son.mp3")
-display=(1000,1072)
+display=(900,1072)
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1) 
 TAILLE = 16
@@ -74,18 +80,31 @@ def draw_vaisseau():
 direction = 1 
 bord_gauche = 1
 bord_droit = 112
-d=50
-n=1
+d=130
+n=2
 def respawn():
-   global d, n
+   global d, n ,fin_vague_joue
    global enemis, enemis_xy 
    if len(enemis)==0:
-      texte = font.render(f"ROUND {n}", True, (255, 255, 255))
-      screen.blit(texte, (100, 100))
+      if not fin_vague_joue:
+            end.play()
+            fin_vague_joue = True
+
+
       
    
       d-=1
-      if d==0:
+      round_font = pygame.font.Font("Assets/ttf/PixelCode.ttf", 150)
+      texte = round_font.render(f"ROUND {n}", True, (255, 0, 0))
+      texte_rect = texte.get_rect(center=(screen.get_width()//2, 200))
+      screen.blit(texte, texte_rect)
+      round_font = pygame.font.Font("Assets/ttf/PixelCode.ttf", 50)
+      texte2 = round_font.render(f"INCOMING: {d}", True, (255, 255, 255))
+      texte_rect = texte2.get_rect(center=(screen.get_width()//2, 300))
+      screen.blit(texte2, texte_rect)
+
+      if d<=0:
+         level.play()
 
 
          enemis_xy = [ 
@@ -110,14 +129,15 @@ def respawn():
          for x,y in enemis_xy:
             rect = pygame.Rect(x * TAILLE, (y * TAILLE)-100, 115, 90)
             enemis.append(rect)
-         d=50
+         d=130
          n+=1
+         fin_vague_joue = False 
 
 def debug():
    global tick,n
    for ennemi in enemis:
       pygame.draw.rect(screen, (255, 0, 0), ennemi, 1) 
-   texte=font.render(f"ticks: {tick} {n}", True, (255, 255, 255))
+   texte=font.render(f"ticks: {tick} ", True, (255, 255, 255))
    screen.blit(texte, (10, 10))
    
 def deplacement_enemis():
@@ -150,7 +170,7 @@ def deplacement_enemis():
 
 def deplacement():
    global score
-
+   x1,y1=display
   
    keys = pygame.key.get_pressed()
    x, y = vaisseau[0]
@@ -165,15 +185,15 @@ def deplacement():
    vaisseau[0] = (x, y)
    if x<=0:
       vaisseau[0]= (1,y)
-   if x>=120:
-      vaisseau[0]= (120,y)
+   if x>=x1/16:
+      vaisseau[0]=( (x1/16)-1,y)
    if y<=45:
       vaisseau[0]= (x,46)
-   if y>=66:
-      vaisseau[0]= (x,65)
-   x,y=display
+   if y>=60:
+      vaisseau[0]= (x,60)
+  
    texte1=font.render(f"score:{score}", True, (0, 0, 255))
-   screen.blit(texte1, (x-230,10))
+   screen.blit(texte1, (x1-230,10))
 
 def shoot():
    global score
@@ -185,7 +205,7 @@ def shoot():
     if keys[pygame.K_SPACE]:
         k=0
         
-        projectiles.append((x, y+1))
+        projectiles.append((x, y))
         tire.play()
    
    for x, y in projectiles:
@@ -224,7 +244,7 @@ def main():
        debug()
       deplacement()
       shoot()
-      
+      respawn()
       draw_vaisseau()
       move_projectiles()
       deplacement_enemis()
@@ -232,7 +252,7 @@ def main():
       pygame.display.flip()
       k+=1
       tick += 1
-      respawn()
+      
       
   pygame.quit()
 main()

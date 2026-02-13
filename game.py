@@ -99,7 +99,7 @@ def respawn():
       texte_rect = texte.get_rect(center=(screen.get_width()//2, 200))
       screen.blit(texte, texte_rect)
       round_font = pygame.font.Font("Assets/ttf/PixelCode.ttf", 50)
-      texte2 = round_font.render(f"INCOMING: {d}", True, (255, 255, 255))
+      texte2 = round_font.render(f"INCOMING: {d}", True, (255, 0, 0))
       texte_rect = texte2.get_rect(center=(screen.get_width()//2, 300))
       screen.blit(texte2, texte_rect)
 
@@ -199,7 +199,7 @@ def shoot():
    global score
    global k
 
-   if k>1:
+   if k>10:
     keys = pygame.key.get_pressed()
     x, y = vaisseau[0]
     if keys[pygame.K_SPACE]:
